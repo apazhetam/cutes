@@ -1,38 +1,54 @@
 // Crossword Puzzle Data
+// Grid: 13 rows x 14 columns
+// '.' = black cell, letters = answer cells
 const puzzle = {
-    rows: 10,
-    cols: 8,
-    // Grid layout: '.' = black cell, letters = answer cells
+    rows: 13,
+    cols: 14,
     grid: [
-        ['.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.'],
-        ['N', 'A', 'K', 'S', 'U', 'D', 'O', 'D'],
-        ['.', '.', 'A', 'C', '.', 'R', '.', '.'],
-        ['.', '.', 'M', 'O', '.', 'I', '.', '.'],
-        ['.', '.', 'L', 'O', '.', 'S', '.', '.'],
-        ['.', '.', 'I', 'P', '.', 'H', '.', '.'],
-        ['.', '.', '.', '.', '.', 'Y', '.', '.'],
-        ['M', 'I', 'T', 'H', 'A', 'A', 'S', '.'],
-        ['.', '.', '.', '.', '.', 'M', '.', '.']
+        ['.', '.', '.', '.', '.', '.', '.', 'M', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', 'K', 'A', 'M', 'L', 'I', '.', '.', '.', '.', '.', 'F'],
+        ['.', '.', '.', '.', '.', '.', '.', 'T', '.', '.', 'A', 'B', 'H', 'I'],
+        ['S', '.', '.', '.', '.', '.', '.', 'H', '.', '.', 'Z', '.', '.', 'R'],
+        ['C', 'A', 'N', 'C', 'U', 'N', '.', 'A', '.', '.', 'U', '.', '.', 'E'],
+        ['O', '.', 'A', '.', '.', 'O', '.', 'A', '.', '.', 'L', '.', '.', '.'],
+        ['O', '.', 'K', '.', 'D', 'R', 'I', 'S', 'H', 'Y', 'A', 'M', '.', '.'],
+        ['P', '.', 'S', '.', '.', 'T', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', 'U', '.', '.', 'H', 'O', 'O', 'D', 'I', 'E', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', 'E', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', 'R', '.', '.', '.', 'D', '.', '.', '.', '.'],
+        ['.', '.', '.', 'T', 'A', 'N', 'J', 'I', 'R', 'O', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', 'D', '.', '.', '.', '.']
     ],
-    // Word definitions
     words: [
         // Across
-        { num: 1, answer: 'NAKSU', direction: 'across', row: 2, col: 0, clue: "Who is stuck in Bu-yeon's body?" },
-        { num: 2, answer: 'DOD', direction: 'across', row: 2, col: 5, clue: "Where we've spent the most amount of nights together" },
-        { num: 3, answer: 'MITHAAS', direction: 'across', row: 8, col: 0, clue: "Where we had the most incredible Dabeli" },
+        { num: 2,  answer: 'KAMLI',    direction: 'across', row: 1,  col: 3,  clue: "Prapti looks so cool dancing to this song" },
+        { num: 4,  answer: 'ABHI',     direction: 'across', row: 2,  col: 10, clue: "Who believed that you carried me on your shoulders during lawnparties?" },
+        { num: 6,  answer: 'CANCUN',   direction: 'across', row: 4,  col: 0,  clue: "Where morning painted the sky just for us" },
+        { num: 9,  answer: 'DRISHYAM', direction: 'across', row: 6,  col: 4,  clue: "The film we longed to watch alone, if only lawnparties had let us be on our own..." },
+        { num: 10, answer: 'HOODIE',   direction: 'across', row: 8,  col: 5,  clue: "In {6 Across} you borrowed my _____, but stole my heart" },
+        { num: 12, answer: 'TANJIRO',  direction: 'across', row: 11, col: 3,  clue: "Whose earring travels with me everywhere?" },
         // Down
-        { num: 1, answer: 'KAMLI', direction: 'down', row: 2, col: 2, clue: "Prapti looks so cool dancing to this song" },
-        { num: 2, answer: 'SCOOP', direction: 'down', row: 2, col: 3, clue: "A _____ of banana ice cream from Bent Spoon" },
-        { num: 3, answer: 'DRISHYAM', direction: 'down', row: 2, col: 5, clue: "If only we could've watched this movie alone after lawnparties..." }
+        { num: 1,  answer: 'MITHAAS',  direction: 'down', row: 0,  col: 7,  clue: "Where a single dabeli stole our hearts" },
+        { num: 3,  answer: 'FIRE',     direction: 'down', row: 1,  col: 13, clue: "{4 Down}'s favorite Taco Bell sauce" },
+        { num: 4,  answer: 'AZULA',    direction: 'down', row: 2,  col: 10, clue: "Who was brave enough to confess first?" },
+        { num: 5,  answer: 'SCOOP',    direction: 'down', row: 3,  col: 0,  clue: "A _____ of banana ice cream from Bent Spoon, shared on a Palmer Square afternoon" },
+        { num: 7,  answer: 'NAKSU',    direction: 'down', row: 4,  col: 2,  clue: "A soul entwined in Bu-yeon's form" },
+        { num: 8,  answer: 'NORTHERN', direction: 'down', row: 4,  col: 5,  clue: "October wrapped us in wonder beneath the _____ lights" },
+        { num: 11, answer: 'DOD',      direction: 'down', row: 10, col: 9,  clue: "The place that's held us through the most midnights" }
     ],
-    // Cell numbers (which cells get clue numbers)
     cellNumbers: {
-        '2,0': 1,
-        '2,2': 1,
-        '2,3': 2,
-        '2,5': { across: 2, down: 3 },
-        '8,0': 3
+        '0,7': 1,
+        '1,3': 2,
+        '1,13': 3,
+        '2,10': 4,
+        '3,0': 5,
+        '4,0': 6,
+        '4,2': 7,
+        '4,5': 8,
+        '6,4': 9,
+        '8,5': 10,
+        '10,9': 11,
+        '11,3': 12
     }
 };
 
