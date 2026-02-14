@@ -180,6 +180,13 @@ function selectCell(cell) {
     cell.classList.add('selected');
     cell.querySelector('input').focus();
     highlightWord();
+
+    // On mobile, scroll the cell into view so it's not hidden by the keyboard
+    if (window.innerWidth <= 768) {
+        setTimeout(() => {
+            cell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        }, 100);
+    }
 }
 
 // Handle input
