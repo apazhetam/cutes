@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Crossword</title>
+    <meta name="description" content="A special Valentine's Day crossword puzzle">
+    <meta property="og:title" content="Valentine's Day Crossword">
+    <meta property="og:description" content="Solve this special crossword puzzle">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Floating hearts background -->
+    <div class="hearts-container">
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1 class="title">Valentine's Crossword</h1>
+            <p class="subtitle">A puzzle filled with our memories</p>
+        </header>
+
+        <div class="crossword-wrapper">
+            <div class="clues-section">
+                <div class="clues-column">
+                    <h2>Across</h2>
+                    <ul class="clues-list">
+                        <li><span class="clue-number">1.</span> Who is stuck in Bu-yeon's body?</li>
+                        <li><span class="clue-number">2.</span> Where we've spent the most amount of nights together</li>
+                        <li><span class="clue-number">3.</span> Where we had the most incredible Dabeli</li>
+                    </ul>
+                </div>
+
+                <div class="clues-column">
+                    <h2>Down</h2>
+                    <ul class="clues-list">
+                        <li><span class="clue-number">1.</span> Prapti looks so cool dancing to this song</li>
+                        <li><span class="clue-number">2.</span> A _____ of banana ice cream from Bent Spoon</li>
+                        <li><span class="clue-number">3.</span> If only we could've watched this movie alone after lawnparties...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="crossword-grid" class="crossword-grid"></div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <h2>You did it!</h2>
+            <p>You've completed the crossword!</p>
+            <button id="close-modal" class="btn">Close</button>
+        </div>
+    </div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>
