@@ -254,8 +254,12 @@ table.crossword-table {
     transform: scale(1.05);
 }
 
-.cell.selected {
+.cell.highlighted {
     background: var(--pink-very-light);
+}
+
+.cell.selected {
+    background: var(--pink-light) !important;
     box-shadow: 0 0 15px rgba(255, 107, 157, 0.6);
 }
 

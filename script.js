@@ -55,6 +55,30 @@ const puzzle = {
 // State management
 let selectedCell = null;
 let currentDirection = 'across';
+let currentWord = null;
+
+// Find which words pass through a given cell
+function getWordsForCell(row, col) {
+    return puzzle.words.filter(word => {
+        if (word.direction === 'across') {
+            return row === word.row && col >= word.col && col < word.col + word.answer.length;
+        } else {
+            return col === word.col && row >= word.row && row < word.row + word.answer.length;
+        }
+    });
+}
+
+// Get all cells belonging to a word
+function getCellsForWord(word) {
+    const cells = [];
+    for (let i = 0; i < word.answer.length; i++) {
+        const r = word.direction === 'across' ? word.row : word.row + i;
+        const c = word.direction === 'across' ? word.col + i : word.col;
+        const cell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+        if (cell) cells.push(cell);
+    }
+    return cells;
+}
 
 // Initialize the crossword
 function init() {
@@ -80,30 +104,20 @@ function renderGrid() {
             const cellValue = puzzle.grid[row][col];
 
             if (cellValue === '.') {
-                // Black cell
                 td.classList.add('black');
             } else {
-                // White cell with input
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.maxLength = 1;
                 input.dataset.answer = cellValue;
                 td.appendChild(input);
 
-                // Add cell number if exists
                 const cellKey = `${row},${col}`;
                 if (puzzle.cellNumbers[cellKey]) {
                     const cellNum = puzzle.cellNumbers[cellKey];
                     const numSpan = document.createElement('span');
                     numSpan.className = 'cell-number';
-
-                    if (typeof cellNum === 'object') {
-                        // Multiple numbers (both across and down start here)
-                        numSpan.textContent = cellNum.across || cellNum.down;
-                    } else {
-                        numSpan.textContent = cellNum;
-                    }
-
+                    numSpan.textContent = typeof cellNum === 'object' ? (cellNum.across || cellNum.down) : cellNum;
                     td.appendChild(numSpan);
                 }
             }
@@ -119,46 +133,53 @@ function renderGrid() {
 
 // Setup event listeners
 function setupEventListeners() {
-    const cells = document.querySelectorAll('.cell:not(.black) input');
-
-    cells.forEach(input => {
-        // Click to select cell
-        input.addEventListener('click', (e) => {
-            selectCell(e.target.parentElement);
-        });
-
-        // Input handling
-        input.addEventListener('input', (e) => {
-            handleInput(e);
-        });
-
-        // Keyboard navigation
-        input.addEventListener('keydown', (e) => {
-            handleKeydown(e);
-        });
+    document.querySelectorAll('.cell:not(.black) input').forEach(input => {
+        input.addEventListener('click', (e) => selectCell(e.target.parentElement));
+        input.addEventListener('input', (e) => handleInput(e));
+        input.addEventListener('keydown', (e) => handleKeydown(e));
     });
 
-    // Modal close button
     document.getElementById('close-modal').addEventListener('click', () => {
         document.getElementById('success-modal').classList.remove('show');
     });
 }
 
-// Select a cell
-function selectCell(cell) {
-    // Remove previous selection
-    document.querySelectorAll('.cell.selected').forEach(c => {
-        c.classList.remove('selected');
-    });
+// Highlight the current word's cells
+function highlightWord() {
+    document.querySelectorAll('.cell.highlighted').forEach(c => c.classList.remove('highlighted'));
+    if (currentWord) {
+        getCellsForWord(currentWord).forEach(c => c.classList.add('highlighted'));
+    }
+}
 
-    // If clicking the same cell, toggle direction
-    if (selectedCell === cell) {
+// Select a cell and auto-detect direction
+function selectCell(cell) {
+    document.querySelectorAll('.cell.selected').forEach(c => c.classList.remove('selected'));
+
+    const row = parseInt(cell.dataset.row);
+    const col = parseInt(cell.dataset.col);
+    const words = getWordsForCell(row, col);
+    const acrossWord = words.find(w => w.direction === 'across');
+    const downWord = words.find(w => w.direction === 'down');
+
+    if (selectedCell === cell && acrossWord && downWord) {
+        // Toggle direction when clicking same cell that has both directions
         currentDirection = currentDirection === 'across' ? 'down' : 'across';
+    } else if (selectedCell !== cell) {
+        // Auto-detect: if only one direction exists, use it
+        if (acrossWord && !downWord) {
+            currentDirection = 'across';
+        } else if (downWord && !acrossWord) {
+            currentDirection = 'down';
+        }
+        // If both exist, keep current direction
     }
 
+    currentWord = currentDirection === 'across' ? (acrossWord || downWord) : (downWord || acrossWord);
     selectedCell = cell;
     cell.classList.add('selected');
     cell.querySelector('input').focus();
+    highlightWord();
 }
 
 // Handle input
@@ -166,7 +187,6 @@ function handleInput(e) {
     const input = e.target;
     const value = input.value.toUpperCase();
 
-    // Only allow letters
     if (value && !/^[A-Z]$/.test(value)) {
         input.value = '';
         return;
@@ -174,47 +194,45 @@ function handleInput(e) {
 
     input.value = value;
 
-    // Check if correct
     if (value === input.dataset.answer) {
         input.parentElement.classList.add('correct');
     } else {
         input.parentElement.classList.remove('correct');
     }
 
-    // Move to next cell
     if (value) {
         moveToNextCell();
     }
 
-    // Check if puzzle is complete
     checkCompletion();
 }
 
 // Handle keyboard navigation
 function handleKeydown(e) {
+    if (!selectedCell) return;
     const row = parseInt(selectedCell.dataset.row);
     const col = parseInt(selectedCell.dataset.col);
 
     switch (e.key) {
         case 'ArrowRight':
             e.preventDefault();
-            moveCell(row, col + 1);
             currentDirection = 'across';
+            moveTo(row, col + 1);
             break;
         case 'ArrowLeft':
             e.preventDefault();
-            moveCell(row, col - 1);
             currentDirection = 'across';
+            moveTo(row, col - 1);
             break;
         case 'ArrowDown':
             e.preventDefault();
-            moveCell(row + 1, col);
             currentDirection = 'down';
+            moveTo(row + 1, col);
             break;
         case 'ArrowUp':
             e.preventDefault();
-            moveCell(row - 1, col);
             currentDirection = 'down';
+            moveTo(row - 1, col);
             break;
         case 'Backspace':
             if (!e.target.value) {
@@ -225,54 +243,46 @@ function handleKeydown(e) {
         case 'Tab':
             e.preventDefault();
             currentDirection = currentDirection === 'across' ? 'down' : 'across';
+            selectCell(selectedCell);
             break;
     }
 }
 
-// Move to a specific cell
-function moveCell(row, col) {
+// Move to a specific cell (only if it's a valid letter cell, no skipping)
+function moveTo(row, col) {
     if (row < 0 || row >= puzzle.rows || col < 0 || col >= puzzle.cols) return;
-
     const targetCell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-
     if (targetCell && !targetCell.classList.contains('black')) {
         selectCell(targetCell);
-    } else {
-        // Skip black cells
-        if (currentDirection === 'across') {
-            moveCell(row, col + 1);
-        } else {
-            moveCell(row + 1, col);
-        }
     }
 }
 
-// Move to next cell based on current direction
+// Move to next cell within the current word
 function moveToNextCell() {
-    if (!selectedCell) return;
-
+    if (!selectedCell || !currentWord) return;
     const row = parseInt(selectedCell.dataset.row);
     const col = parseInt(selectedCell.dataset.col);
-
-    if (currentDirection === 'across') {
-        moveCell(row, col + 1);
-    } else {
-        moveCell(row + 1, col);
-    }
+    const nextRow = currentWord.direction === 'across' ? row : row + 1;
+    const nextCol = currentWord.direction === 'across' ? col + 1 : col;
+    const wordEnd = currentWord.direction === 'across'
+        ? currentWord.col + currentWord.answer.length
+        : currentWord.row + currentWord.answer.length;
+    const pos = currentWord.direction === 'across' ? nextCol : nextRow;
+    if (pos >= wordEnd) return;
+    moveTo(nextRow, nextCol);
 }
 
-// Move to previous cell based on current direction
+// Move to previous cell within the current word
 function moveToPreviousCell() {
-    if (!selectedCell) return;
-
+    if (!selectedCell || !currentWord) return;
     const row = parseInt(selectedCell.dataset.row);
     const col = parseInt(selectedCell.dataset.col);
-
-    if (currentDirection === 'across') {
-        moveCell(row, col - 1);
-    } else {
-        moveCell(row - 1, col);
-    }
+    const prevRow = currentWord.direction === 'across' ? row : row - 1;
+    const prevCol = currentWord.direction === 'across' ? col - 1 : col;
+    const wordStart = currentWord.direction === 'across' ? currentWord.col : currentWord.row;
+    const pos = currentWord.direction === 'across' ? prevCol : prevRow;
+    if (pos < wordStart) return;
+    moveTo(prevRow, prevCol);
 }
 
 // Check if puzzle is complete
